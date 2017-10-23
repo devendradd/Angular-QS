@@ -1,47 +1,25 @@
 import { Component } from '@angular/core';
+import {PostsService} from '../services/posts.service';
 
 @Component({
+  moduleId: module.id,
   selector: 'user',
-  template: `
-    <h1>
-      Hello {{name}}
-    </h1>
-    <p>
-      <strong>
-        Email:
-      </strong> 
-      {{Email}}
-      
-    </p>
-    <p>
-      <strong>
-        Address:
-      </strong> 
-      {{Address.street}} , {{Address.city}}
-      
-    </p>
-    <button (click)="toggleHobbies()"> {{ShowHbbies ? "Hide Hobbies" : "Show Hobbies"}} </button>
-    <div *ngIf = "ShowHbbies">
-        <h3> Hobbies </h3> 
-        <ul>
-            <li *ngFor="let hobby of Hobbies">
-                {{hobby}}
-            </li>
-        </ul>
-    </div>
-    `,
+  templateUrl: 'user.component.html',
+  providers: [PostsService]
 })
-export default class UserComponent  {
+export class UserComponent  {
    name: string ;
    Email: string  ;
    Address: address ;
    Hobbies: string[]; 
    ShowHbbies: boolean;
-   
+   postsArray: Post[];
    /**
     
     */
-   constructor() {
+   constructor(private postsService: PostsService) {
+     console.log('here');
+     
        this.name = 'Devendra Deo';
        this.Email = 'this.devendra@gmail.com';
        this.Address = {
@@ -51,6 +29,9 @@ export default class UserComponent  {
        this.Hobbies = ['Music', 'paintings', 'sports']; 
        this.ShowHbbies= false;
        
+       this.postsService.getPosts().subscribe(
+         posts => {this.postsArray = posts
+      });
    }   
 
    toggleHobbies(){
@@ -64,9 +45,25 @@ export default class UserComponent  {
         }
         
    }
+
+   addHobby(hobby: any){
+      console.log(hobby);
+      this.Hobbies.push(hobby);
+      
+   }
+
+   deleteHobby(i: any){
+      this.Hobbies.splice(i, 1);
+   }
   }
 
   interface address{
     street: string;
     city: string;
 }
+
+  interface Post{
+    id: number;
+    title: string;
+    body: string;
+  }
